@@ -18,6 +18,7 @@ function checkAuth() {
                 <div class="ml-10 flex items-baseline space-x-4">
                   <a href="/" class="text-gray-700 hover:text-indigo-600 px-3 py-2 rounded-md font-medium">Home</a>
                   <a href="/startups.html" class="text-gray-700 hover:text-indigo-600 px-3 py-2 rounded-md font-medium">Browse</a>
+                  <a href="/products.html" class="text-gray-700 hover:text-indigo-600 px-3 py-2 rounded-md font-medium">Products</a>
                   <a href="/resources.html" class="text-gray-700 hover:text-indigo-600 px-3 py-2 rounded-md font-medium">Resources</a>
                 </div>
               </div>
@@ -41,6 +42,7 @@ function checkAuth() {
                 <div class="ml-10 flex items-baseline space-x-4">
                   <a href="/" class="text-gray-700 hover:text-indigo-600 px-3 py-2 rounded-md font-medium">Home</a>
                   <a href="/startups.html" class="text-gray-700 hover:text-indigo-600 px-3 py-2 rounded-md font-medium">Browse</a>
+                  <a href="/products.html" class="text-gray-700 hover:text-indigo-600 px-3 py-2 rounded-md font-medium">Products</a>
                 </div>
               </div>
               <div class="flex items-center space-x-4">

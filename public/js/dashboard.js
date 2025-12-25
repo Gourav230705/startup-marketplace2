@@ -13,6 +13,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     } else if (user.role === 'customer') {
         document.getElementById('customer-section').classList.remove('hidden');
         loadMyInquiries();
+        loadMyPurchases();
     } else if (user.role === 'admin') {
         document.getElementById('admin-section').classList.remove('hidden');
         loadAdminResources();
@@ -360,3 +361,32 @@ window.deleteResource = deleteResource;
 window.updateStartupStatus = updateStartupStatus;
 window.loadAdminStartups = loadAdminStartups;
 window.loadAdminResources = loadAdminResources;
+
+async function loadMyPurchases() {
+    try {
+        const orders = await apiFetch('/orders/my');
+        const container = document.getElementById('my-purchases-list');
+
+        if (orders.length === 0) {
+            container.innerHTML = '<p class="text-gray-500 py-4">No purchases yet.</p>';
+            return;
+        }
+
+        container.innerHTML = orders.map(order => `
+            <div class="bg-white p-4 rounded shadow border border-gray-100 flex justify-between items-center">
+                <div>
+                    <h4 class="font-bold text-gray-800">${order.product ? order.product.name : 'Unknown Product'}</h4>
+                    <p class="text-sm text-gray-600">From: <span class="font-medium">${order.startup ? order.startup.name : 'Unknown Startup'}</span></p>
+                    <p class="text-xs text-gray-400 mt-1">Purchased on: ${new Date(order.purchaseDate).toLocaleDateString()}</p>
+                </div>
+                <div class="text-right">
+                    <span class="block text-lg font-bold text-indigo-600">$${order.price}</span>
+                    <span class="inline-block px-2 py-0.5 rounded text-xs font-semibold uppercase bg-green-100 text-green-800">${order.status}</span>
+                </div>
+            </div>
+        `).join('');
+    } catch (error) {
+        console.error('Error loading purchases', error);
+        document.getElementById('my-purchases-list').innerHTML = '<p class="text-red-500">Error loading purchases.</p>';
+    }
+}

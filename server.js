@@ -27,6 +27,8 @@ app.use('/api/resources', require('./routes/resourceRoutes'));
 app.use('/api/inquiries', require('./routes/inquiryRoutes'));
 app.use('/api/resource-requests', require('./routes/resourceRequestRoutes'));
 app.use('/api/users', require('./routes/userRoutes'));
+app.use('/api/products', require('./routes/productRoutes'));
+app.use('/api/orders', require('./routes/orderRoutes'));
 
 app.get('/api', (req, res) => {
     res.json({ message: 'API is running' });
