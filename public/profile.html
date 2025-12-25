@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile - Startup Marketplace</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body class="bg-gray-50">
+    <div id="nav-container"></div>
+
+    <div class="max-w-4xl mx-auto py-12 px-4 sm:px-6 lg:px-8 mt-16">
+        <!-- Loading State -->
+        <div id="loading" class="text-center py-12">
+            <div class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
+            <p class="mt-4 text-gray-600">Loading profile...</p>
+        </div>
+
+        <!-- Profile Content -->
+        <div id="profile-content" class="hidden">
+            <!-- Header -->
+            <div class="mb-8">
+                <h1 class="text-3xl font-bold text-gray-900">My Profile</h1>
+                <p class="mt-2 text-gray-600">Manage your account information and preferences</p>
+            </div>
+
+            <!-- View Mode -->
+            <div id="view-mode">
+                <!-- Profile Card -->
+                <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
+                    <!-- Header Section with Gradient -->
+                    <div class="bg-gradient-to-r from-indigo-600 to-purple-600 px-8 py-12">
+                        <div class="flex items-center space-x-6">
+                            <div class="flex-shrink-0">
+                                <div id="avatar-view"
+                                    class="h-24 w-24 rounded-full bg-white bg-opacity-20 backdrop-blur-sm flex items-center justify-center text-white text-4xl font-bold border-4 border-white shadow-xl">
+                                </div>
+                            </div>
+                            <div class="text-white">
+                                <h2 id="name-view" class="text-3xl font-bold"></h2>
+                                <p id="email-view" class="text-indigo-100 mt-1 text-lg"></p>
+                                <span id="role-badge-view"
+                                    class="inline-block mt-3 bg-white bg-opacity-20 backdrop-blur-sm px-4 py-2 rounded-full text-sm font-semibold uppercase tracking-wide"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Profile Details -->
+                    <div class="px-8 py-8 space-y-6">
+                        <!-- Bio Section -->
+                        <div>
+                            <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-2">About Me</h3>
+                            <p id="bio-view" class="text-gray-700 text-lg leading-relaxed"></p>
+                        </div>
+
+                        <!-- Skills Section -->
+                        <div>
+                            <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">Skills &
+                                Interests</h3>
+                            <div id="skills-view" class="flex flex-wrap gap-2"></div>
+                        </div>
+
+                        <!-- Contact Info Section -->
+                        <div>
+                            <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-2">Contact
+                                Information</h3>
+                            <p id="contact-view" class="text-gray-700 text-lg"></p>
+                        </div>
+
+                        <!-- Member Since -->
+                        <div class="pt-4 border-t border-gray-200">
+                            <p class="text-sm text-gray-500">
+                                Member since <span id="created-view" class="font-medium text-gray-700"></span>
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Action Button -->
+                    <div class="bg-gray-50 px-8 py-4 border-t border-gray-100">
+                        <button onclick="enterEditMode()"
+                            class="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-bold py-3 px-6 rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
+                            Edit Profile
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Edit Mode -->
+            <div id="edit-mode" class="hidden">
+                <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
+                    <!-- Form Header -->
+                    <div class="bg-gradient-to-r from-indigo-600 to-purple-600 px-8 py-8">
+                        <h2 class="text-2xl font-bold text-white">Edit Profile</h2>
+                        <p class="text-indigo-100 mt-1">Update your information below</p>
+                    </div>
+
+                    <!-- Form -->
+                    <form id="profile-form" class="px-8 py-8 space-y-6">
+                        <!-- Name -->
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Name *</label>
+                            <input type="text" id="name-input" required
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-200">
+                        </div>
+
+                        <!-- Email (Read-only) -->
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Email</label>
+                            <input type="email" id="email-input" readonly
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-100 text-gray-600 cursor-not-allowed">
+                            <p class="mt-1 text-sm text-gray-500">Email cannot be changed</p>
+                        </div>
+
+                        <!-- Role (Read-only) -->
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Role</label>
+                            <input type="text" id="role-input" readonly
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-100 text-gray-600 cursor-not-allowed">
+                        </div>
+
+                        <!-- Bio -->
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">About Me</label>
+                            <textarea id="bio-input" rows="4"
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-200"
+                                placeholder="Tell us about yourself..."></textarea>
+                        </div>
+
+                        <!-- Skills -->
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Skills & Interests</label>
+                            <input type="text" id="skills-input"
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-200"
+                                placeholder="Separate skills with commas (e.g., JavaScript, Marketing, AI)">
+                            <p class="mt-1 text-sm text-gray-500">Enter comma-separated values</p>
+                        </div>
+
+                        <!-- Contact Info -->
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Contact Information</label>
+                            <input type="text" id="contact-input"
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-200"
+                                placeholder="Phone number or other contact details">
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="flex space-x-4 pt-4">
+                            <button type="submit"
+                                class="flex-1 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-bold py-3 px-6 rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl">
+                                Save Changes
+                            </button>
+                            <button type="button" onclick="cancelEdit()"
+                                class="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-3 px-6 rounded-lg transition duration-200">
+                                Cancel
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/app.js"></script>
+    <script>
+        let currentProfile = null;
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Check if user is logged in
+            const token = localStorage.getItem('token');
+            if (!token) {
+                window.location.href = '/login.html';
+                return;
+            }
+
+            await loadProfile();
+
+            // Form submission
+            document.getElementById('profile-form').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                await updateProfile();
+            });
+        });
+
+        async function loadProfile() {
+            try {
+                currentProfile = await apiFetch('/users/profile');
+                displayProfile(currentProfile);
+
+                document.getElementById('loading').classList.add('hidden');
+                document.getElementById('profile-content').classList.remove('hidden');
+            } catch (error) {
+                alert('Error loading profile: ' + error.message);
+                console.error(error);
+            }
+        }
+
+        function displayProfile(profile) {
+            // View Mode
+            const nameInitial = profile.name.charAt(0).toUpperCase();
+            document.getElementById('avatar-view').textContent = nameInitial;
+            document.getElementById('name-view').textContent = profile.name;
+            document.getElementById('email-view').textContent = profile.email;
+
+            // Display role as human-readable text
+            const roleText = profile.role === 'owner' ? 'Founder' : profile.role === 'admin' ? 'Admin' : 'Customer';
+            document.getElementById('role-badge-view').textContent = roleText;
+
+            // Bio
+            const bioElement = document.getElementById('bio-view');
+            if (profile.bio && profile.bio.trim()) {
+                bioElement.textContent = profile.bio;
+            } else {
+                bioElement.innerHTML = '<span class="text-gray-400 italic">No bio added yet</span>';
+            }
+
+            // Skills
+            const skillsContainer = document.getElementById('skills-view');
+            if (profile.skills && profile.skills.length > 0) {
+                skillsContainer.innerHTML = profile.skills.map(skill =>
+                    `<span class="inline-block bg-indigo-100 text-indigo-700 px-4 py-2 rounded-full text-sm font-medium">${skill}</span>`
+                ).join('');
+            } else {
+                skillsContainer.innerHTML = '<span class="text-gray-400 italic">No skills added yet</span>';
+            }
+
+            // Contact Info
+            const contactElement = document.getElementById('contact-view');
+            if (profile.contactInfo && profile.contactInfo.trim()) {
+                contactElement.textContent = profile.contactInfo;
+            } else {
+                contactElement.innerHTML = '<span class="text-gray-400 italic">No contact information added yet</span>';
+            }
+
+            // Member since
+            const createdDate = new Date(profile.createdAt).toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+            document.getElementById('created-view').textContent = createdDate;
+
+            // Populate edit form
+            document.getElementById('name-input').value = profile.name;
+            document.getElementById('email-input').value = profile.email;
+            document.getElementById('role-input').value = roleText;
+            document.getElementById('bio-input').value = profile.bio || '';
+            document.getElementById('skills-input').value = profile.skills ? profile.skills.join(', ') : '';
+            document.getElementById('contact-input').value = profile.contactInfo || '';
+        }
+
+        function enterEditMode() {
+            document.getElementById('view-mode').classList.add('hidden');
+            document.getElementById('edit-mode').classList.remove('hidden');
+        }
+
+        function cancelEdit() {
+            // Reset form to current profile values
+            displayProfile(currentProfile);
+            document.getElementById('edit-mode').classList.add('hidden');
+            document.getElementById('view-mode').classList.remove('hidden');
+        }
+
+        async function updateProfile() {
+            const name = document.getElementById('name-input').value.trim();
+            const bio = document.getElementById('bio-input').value.trim();
+            const skillsInput = document.getElementById('skills-input').value.trim();
+            const skills = skillsInput ? skillsInput.split(',').map(s => s.trim()).filter(s => s) : [];
+            const contactInfo = document.getElementById('contact-input').value.trim();
+
+            if (!name) {
+                alert('Name is required');
+                return;
+            }
+
+            try {
+                const updatedProfile = await apiFetch('/users/profile', 'PUT', {
+                    name,
+                    bio,
+                    skills,
+                    contactInfo
+                });
+
+                // Update localStorage user data
+                const user = JSON.parse(localStorage.getItem('user'));
+                user.name = updatedProfile.name;
+                user.bio = updatedProfile.bio;
+                user.skills = updatedProfile.skills;
+                user.contactInfo = updatedProfile.contactInfo;
+                localStorage.setItem('user', JSON.stringify(user));
+
+                currentProfile = updatedProfile;
+                displayProfile(updatedProfile);
+
+                // Show success and return to view mode
+                alert('Profile updated successfully!');
+                document.getElementById('edit-mode').classList.add('hidden');
+                document.getElementById('view-mode').classList.remove('hidden');
+            } catch (error) {
+                alert('Error updating profile: ' + error.message);
+                console.error(error);
+            }
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resources - Startup Marketplace</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body class="bg-gray-50">
+    <div id="nav-container"></div>
+
+    <div class="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8 mt-16">
+        <div class="text-center mb-12">
+            <h1 class="text-3xl font-bold text-gray-900">Resources for Growth</h1>
+            <p class="mt-4 text-gray-600">Curated tools, investors, and mentors to help you scale.</p>
+        </div>
+
+        <div class="flex justify-center mb-8 space-x-4">
+            <button onclick="filterResources('all')"
+                class="px-4 py-2 rounded-full bg-indigo-600 text-white hover:bg-indigo-700 focus:outline-none">All</button>
+            <button onclick="filterResources('investor')"
+                class="px-4 py-2 rounded-full bg-white text-gray-700 hover:bg-gray-100 border border-gray-300 focus:outline-none">Investors</button>
+            <button onclick="filterResources('mentor')"
+                class="px-4 py-2 rounded-full bg-white text-gray-700 hover:bg-gray-100 border border-gray-300 focus:outline-none">Mentors</button>
+            <button onclick="filterResources('tool')"
+                class="px-4 py-2 rounded-full bg-white text-gray-700 hover:bg-gray-100 border border-gray-300 focus:outline-none">Tools</button>
+        </div>
+
+        <div id="resources-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <!-- Loaded via JS -->
+            <p class="col-span-3 text-center text-gray-500">Loading resources...</p>
+        </div>
+    </div>
+
+    <!-- Connect Modal -->
+    <div id="connect-modal" class="fixed inset-0 bg-gray-900 bg-opacity-50 hidden items-center justify-center z-50 p-4">
+        <div
+            class="bg-white rounded-lg shadow-xl max-w-md w-full overflow-hidden transform transition-all sm:my-8 scale-100 opacity-100">
+            <div class="px-6 py-4 bg-gray-50 border-b border-gray-100 flex justify-between items-center">
+                <h3 class="text-lg font-medium text-gray-900" id="modal-title">Connect with Resource</h3>
+                <button onclick="closeConnectModal()" class="text-gray-400 hover:text-gray-500 focus:outline-none">
+                    <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+            <div class="p-6">
+                <p class="mb-4 text-sm text-gray-600">Send a request to <span id="resource-name"
+                        class="font-bold text-indigo-600"></span>.</p>
+                <form id="connect-form">
+                    <input type="hidden" id="resource-id">
+                    <div class="mb-4">
+                        <label class="block text-gray-700 text-sm font-bold mb-2" for="request-reason">Reason for
+                            Connection</label>
+                        <select id="request-reason" required
+                            class="shadow-sm border border-gray-300 rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
+                            <option value="">Select a reason...</option>
+                            <option value="Mentorship">Mentorship</option>
+                            <option value="Investment">Investment Opportunity</option>
+                            <option value="Partnership">Strategic Partnership</option>
+                            <option value="Advice">General Advice</option>
+                            <option value="Access">Request Tool Access</option>
+                        </select>
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-gray-700 text-sm font-bold mb-2" for="request-need">Specific Need /
+                            Message</label>
+                        <textarea id="request-need" rows="4" required
+                            placeholder="Briefly describe what you are looking for..."
+                            class="shadow-sm border border-gray-300 rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"></textarea>
+                    </div>
+                    <div class="flex items-center justify-end space-x-3 mt-6">
+                        <button type="button" onclick="closeConnectModal()"
+                            class="px-4 py-2 bg-white border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Cancel</button>
+                        <button type="submit"
+                            class="px-4 py-2 bg-indigo-600 border border-transparent rounded-md text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Send
+                            Request</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/app.js"></script>
+    <script>
+        let allResources = [];
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                allResources = await apiFetch('/resources');
+                renderResources(allResources);
+            } catch (error) {
+                console.error(error);
+                document.getElementById('resources-grid').innerHTML = '<p class="col-span-3 text-center text-red-500">Error loading resources.</p>';
+            }
+        });
+
+        function renderResources(resources) {
+            const container = document.getElementById('resources-grid');
+            if (resources.length === 0) {
+                container.innerHTML = '<p class="col-span-3 text-center text-gray-500">No resources found.</p>';
+                return;
+            }
+            container.innerHTML = resources.map(resource => `
+                <div class="glass p-6 rounded-lg hover:shadow-lg transition-shadow duration-300 border-t-4 ${getTypeColor(resource.type)} flex flex-col items-center text-center">
+                    <div class="w-24 h-24 rounded-full bg-gray-200 mb-4 flex items-center justify-center overflow-hidden">
+                        ${resource.image ? `<img src="${resource.image}" alt="${resource.title}" class="w-full h-full object-cover">` : `<span class="text-3xl text-gray-400 font-bold">${resource.title.charAt(0)}</span>`}
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900">${resource.title}</h3>
+                    <span class="text-xs font-semibold px-2 py-1 rounded bg-gray-100 uppercase mt-2 mb-3 tracking-wide">${resource.type}</span>
+                    
+                    <p class="text-gray-600 text-sm mb-4 line-clamp-3">${resource.description}</p>
+                    
+                    ${resource.expertise && resource.expertise.length > 0 ? `
+                    <div class="flex flex-wrap justify-center gap-2 mb-4">
+                        ${resource.expertise.map(exp => `<span class="text-xs bg-indigo-50 text-indigo-700 px-2 py-1 rounded-full border border-indigo-100">${exp}</span>`).join('')}
+                    </div>
+                    ` : ''}
+
+                    <div class="mt-auto flex space-x-3 w-full">
+                         ${resource.link ? `<a href="${resource.link}" target="_blank" class="flex-1 py-2 px-3 bg-white border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors">View Profile</a>` : ''}
+                        <button onclick="openConnectModal('${resource._id}', '${resource.title}')" class="flex-1 py-2 px-3 bg-indigo-600 text-white rounded-md text-sm font-medium hover:bg-indigo-700 transition-colors shadow-sm">Connect</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+
+        function getTypeColor(type) {
+            switch (type) {
+                case 'investor': return 'border-green-500';
+                case 'mentor': return 'border-blue-500';
+                case 'tool': return 'border-purple-500';
+                default: return 'border-gray-500';
+            }
+        }
+
+        window.filterResources = (type) => {
+            if (type === 'all') {
+                renderResources(allResources);
+            } else {
+                const filtered = allResources.filter(r => r.type === type);
+                renderResources(filtered);
+            }
+        };
+
+        // Modal Logic
+        const modal = document.getElementById('connect-modal');
+        const resourceNameSpan = document.getElementById('resource-name');
+        const resourceIdInput = document.getElementById('resource-id');
+
+        window.openConnectModal = (id, title) => {
+            // Check if user is logged in
+            const user = localStorage.getItem('user');
+            if (!user) {
+                window.location.href = '/login.html';
+                return;
+            }
+
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            resourceNameSpan.textContent = title;
+            resourceIdInput.value = id;
+        };
+
+        window.closeConnectModal = () => {
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+            document.getElementById('connect-form').reset();
+        };
+
+        document.getElementById('connect-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const resourceId = resourceIdInput.value;
+            const reason = document.getElementById('request-reason').value;
+            const need = document.getElementById('request-need').value;
+            const btn = e.target.querySelector('button[type="submit"]');
+
+            const originalText = btn.textContent;
+            btn.textContent = 'Sending...';
+            btn.disabled = true;
+
+            try {
+                await apiFetch('/resource-requests', 'POST', { resourceId, reason, need });
+                alert('Request sent successfully!');
+                closeConnectModal();
+            } catch (error) {
+                alert('Error sending request: ' + error.message);
+            } finally {
+                btn.textContent = originalText;
+                btn.disabled = false;
+            }
+        });
+    </script>
+</body>
+
+</html>

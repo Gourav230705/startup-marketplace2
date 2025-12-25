@@ -1,0 +1,59 @@
+Startup Marketplace Project Details
+=====================================
+
+Project Overview
+----------------
+This project is a "Marketplace for Startups" application designed to connect startup founders, investors, and other stakeholders. It provides a platform for listing startups, accessing resources, and facilitating communication.
+
+Technology Stack
+----------------
+- Backend: Node.js, Express.js
+- Database: MongoDB (using Mongoose ODM)
+- Authentication: JSON Web Tokens (JWT), bcryptjs for password hashing
+- Frontend: HTML, CSS, JavaScript (served from the 'public' directory)
+- Utilities: Dotenv for environment configuration, CORS, Nodemon for development
+
+Features
+--------
+
+1. User Authentication & Management
+   - User Registration and Login.
+   - Secure password hashing.
+   - Role-based access control (implied by User model).
+   - JWT-based session management.
+
+2. Startup Listings
+   - Create, list, and view startup profiles.
+   - Detailed information about startups.
+   - Management routes for startup data.
+
+3. Resource Center
+   - comprehensive library of resources for entrepreneurs.
+   - Functionality to view and access resources.
+   - Resource Request system: Users can request specific resources or assistance.
+
+4. Inquiry System
+   - Mechanism for users to send inquiries.
+   - Facilitates communication between different parties on the platform.
+
+5. Database Seeding
+   - Automated seeding script (`seeder.js`) to populate the database with initial sample data.
+
+Project Structure
+-----------------
+The application follows the MVC (Model-View-Controller) architectural pattern:
+- /models: Database schemas (User, Startup, Resource, ResourceRequest, Inquiry).
+- /controllers: Logic for handling requests and business operations.
+- /routes: API route definitions mapping to controllers.
+- /public: Static assets (HTML, CSS, JS) for the frontend interface.
+- /config: Configuration files (likely database connection).
+- /middleware: Custom middleware (likely for auth protection).
+
+Dependencies
+------------
+- bcryptjs
+- cors
+- dotenv
+- express
+- jsonwebtoken
+- mongoose

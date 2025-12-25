@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Browse Startups - Startup Marketplace</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body class="bg-gray-50">
+    <div id="nav-container"></div>
+
+    <div class="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8 mt-16">
+        <div class="text-center mb-12">
+            <h1 class="text-3xl font-bold text-gray-900">Explore Startups</h1>
+            <p class="mt-4 text-gray-600">Find the next unicorn to invest in or partner with.</p>
+        </div>
+
+        <div class="max-w-xl mx-auto mb-10">
+            <div class="relative">
+                <input type="text" id="search-input" placeholder="Search by name or industry..."
+                    class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 shadow-sm">
+                <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                    <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg>
+                </div>
+            </div>
+        </div>
+
+        <div id="startups-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <!-- Loaded via JS -->
+            <p class="col-span-3 text-center text-gray-500">Loading...</p>
+        </div>
+    </div>
+
+    <!-- Contact Modal -->
+    <div id="contact-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden overflow-y-auto h-full w-full">
+        <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+            <h3 class="text-lg font-medium text-gray-900 mb-4">Contact Startup</h3>
+            <form id="contact-form">
+                <input type="hidden" id="contact-startup-id">
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2">Message</label>
+                    <textarea id="contact-message" required
+                        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                        rows="4"></textarea>
+                </div>
+                <div class="flex justify-end space-x-2">
+                    <button type="button" onclick="closeContactModal()"
+                        class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded">Cancel</button>
+                    <button type="submit"
+                        class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded">Send</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="js/app.js"></script>
+    <script>
+        let allStartups = [];
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                allStartups = await apiFetch('/startups');
+                renderStartups(allStartups);
+
+                document.getElementById('search-input').addEventListener('input', (e) => {
+                    const term = e.target.value.toLowerCase();
+                    const filtered = allStartups.filter(s =>
+                        s.name.toLowerCase().includes(term) ||
+                        s.industry.toLowerCase().includes(term) ||
+                        s.description.toLowerCase().includes(term)
+                    );
+                    renderStartups(filtered);
+                });
+
+                // Contact Form
+                document.getElementById('contact-form').addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    if (!checkLogin()) return;
+
+                    const startupId = document.getElementById('contact-startup-id').value;
+                    const message = document.getElementById('contact-message').value;
+
+                    try {
+                        await apiFetch('/inquiries', 'POST', { startupId, message });
+                        alert('Message sent successfully!');
+                        closeContactModal();
+                    } catch (error) {
+                        alert('Error sending message: ' + error.message);
+                    }
+                });
+
+            } catch (error) {
+                console.error(error);
+            }
+        });
+
+        function renderStartups(startups) {
+            const container = document.getElementById('startups-grid');
+            if (startups.length === 0) {
+                container.innerHTML = '<p class="col-span-3 text-center text-gray-500">No startups found.</p>';
+                return;
+            }
+            container.innerHTML = startups.map(startup => `
+                <a href="startup-detail.html?id=${startup._id}" class="block group">
+                    <div class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 flex flex-col h-full">
+                        <div class="p-8 flex-grow">
+                            <div class="uppercase tracking-wide text-sm text-indigo-500 font-semibold">${startup.industry}</div>
+                            <div class="block mt-1 text-lg leading-tight font-medium text-black group-hover:text-indigo-600 transition-colors duration-200">${startup.name}</div>
+                            <p class="mt-2 text-gray-500">${startup.description.substring(0, 150)}${startup.description.length > 150 ? '...' : ''}</p>
+                             <div class="mt-4 flex items-center">
+                                <span class="text-sm text-gray-400 bg-gray-100 rounded-full px-2 py-1">Owner: ${startup.owner ? startup.owner.name : 'Unknown'}</span>
+                             </div>
+                        </div>
+                        <div class="bg-gray-50 px-8 py-4 border-t border-gray-100">
+                            <button onclick="event.preventDefault(); event.stopPropagation(); openContactModal('${startup._id}')" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded transition duration-200">
+                                Contact
+                            </button>
+                        </div>
+                    </div>
+                </a>
+            `).join('');
+        }
+
+        function checkLogin() {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                window.location.href = '/login.html';
+                return false;
+            }
+            return true;
+        }
+
+        window.openContactModal = (id) => {
+            if (!checkLogin()) return;
+            document.getElementById('contact-startup-id').value = id;
+            document.getElementById('contact-modal').classList.remove('hidden');
+        };
+        window.closeContactModal = () => document.getElementById('contact-modal').classList.add('hidden');
+    </script>
+</body>
+
+</html>

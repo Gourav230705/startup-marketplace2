@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Startup Details - Startup Marketplace</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body class="bg-gray-50">
+    <div id="nav-container"></div>
+
+    <div class="max-w-5xl mx-auto py-12 px-4 sm:px-6 lg:px-8 mt-16">
+        <!-- Back Button -->
+        <div class="mb-6">
+            <a href="startups.html"
+                class="inline-flex items-center text-indigo-600 hover:text-indigo-800 transition-colors duration-200">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                </svg>
+                Back to Browse
+            </a>
+        </div>
+
+        <!-- Loading State -->
+        <div id="loading" class="text-center py-12">
+            <div class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
+            <p class="mt-4 text-gray-600">Loading startup details...</p>
+        </div>
+
+        <!-- Error State -->
+        <div id="error" class="hidden">
+            <div class="bg-red-50 border-l-4 border-red-500 p-6 rounded-lg">
+                <div class="flex">
+                    <div class="flex-shrink-0">
+                        <svg class="h-6 w-6 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </div>
+                    <div class="ml-3">
+                        <h3 class="text-lg font-medium text-red-800">Error Loading Startup</h3>
+                        <p class="mt-2 text-red-700" id="error-message"></p>
+                        <div class="mt-4">
+                            <a href="startups.html" class="text-red-700 font-medium hover:text-red-900">
+                                Return to Browse &rarr;
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Startup Details -->
+        <div id="startup-detail" class="hidden">
+            <!-- Header Card -->
+            <div class="bg-gradient-to-r from-indigo-600 to-purple-600 rounded-2xl shadow-xl overflow-hidden mb-8">
+                <div class="px-8 py-12 text-white">
+                    <div class="flex items-center mb-3">
+                        <span id="industry-badge"
+                            class="inline-block bg-white bg-opacity-20 backdrop-blur-sm px-4 py-2 rounded-full text-sm font-semibold uppercase tracking-wide"></span>
+                    </div>
+                    <h1 id="startup-name" class="text-4xl font-bold mb-4"></h1>
+                    <p id="startup-description" class="text-lg text-indigo-100 leading-relaxed"></p>
+                </div>
+            </div>
+
+            <!-- Main Content Grid -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Left Column - Details -->
+                <div class="lg:col-span-2 space-y-6">
+                    <!-- Funding & Website Card -->
+                    <div class="bg-white rounded-xl shadow-md p-6">
+                        <h2 class="text-xl font-semibold text-gray-900 mb-4">Company Information</h2>
+                        <div class="space-y-4">
+                            <div>
+                                <label class="text-sm font-medium text-gray-500 uppercase tracking-wide">Funding
+                                    Stage</label>
+                                <p id="funding-stage" class="mt-1 text-lg text-gray-900"></p>
+                            </div>
+                            <div id="website-container" class="hidden">
+                                <label class="text-sm font-medium text-gray-500 uppercase tracking-wide">Website</label>
+                                <a id="website-link" href="" target="_blank" rel="noopener noreferrer"
+                                    class="mt-1 block text-lg text-indigo-600 hover:text-indigo-800 hover:underline flex items-center">
+                                    <span id="website-text"></span>
+                                    <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14">
+                                        </path>
+                                    </svg>
+                                </a>
+                            </div>
+                            <div>
+                                <label class="text-sm font-medium text-gray-500 uppercase tracking-wide">Contact
+                                    Email</label>
+                                <a id="contact-email" href=""
+                                    class="mt-1 block text-lg text-indigo-600 hover:text-indigo-800 hover:underline"></a>
+                            </div>
+                            <div>
+                                <label class="text-sm font-medium text-gray-500 uppercase tracking-wide">Listed
+                                    On</label>
+                                <p id="created-date" class="mt-1 text-lg text-gray-900"></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column - Owner & Actions -->
+                <div class="lg:col-span-1 space-y-6">
+                    <!-- Owner Card -->
+                    <div class="bg-white rounded-xl shadow-md p-6">
+                        <h2 class="text-xl font-semibold text-gray-900 mb-4">Owner</h2>
+                        <div class="flex items-center space-x-4">
+                            <div class="flex-shrink-0">
+                                <div
+                                    class="h-16 w-16 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white text-2xl font-bold">
+                                    <span id="owner-initial"></span>
+                                </div>
+                            </div>
+                            <div>
+                                <p id="owner-name" class="text-lg font-medium text-gray-900"></p>
+                                <a id="owner-email" href=""
+                                    class="text-sm text-indigo-600 hover:text-indigo-800 hover:underline"></a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Contact Action Card -->
+                    <div
+                        class="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-xl shadow-md p-6 border border-indigo-100">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-3">Interested?</h3>
+                        <p class="text-gray-600 mb-4 text-sm">Send a message to the startup owner to express your
+                            interest or ask questions.</p>
+                        <button id="contact-btn" onclick="openContactModal()"
+                            class="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-bold py-3 px-6 rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
+                            Contact Startup
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contact Modal -->
+    <div id="contact-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden overflow-y-auto h-full w-full z-50">
+        <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+            <h3 class="text-lg font-medium text-gray-900 mb-4">Contact Startup</h3>
+            <form id="contact-form">
+                <input type="hidden" id="contact-startup-id">
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2">Message</label>
+                    <textarea id="contact-message" required
+                        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:ring-2 focus:ring-indigo-500"
+                        rows="4" placeholder="Hi, I'm interested in learning more about your startup..."></textarea>
+                </div>
+                <div class="flex justify-end space-x-2">
+                    <button type="button" onclick="closeContactModal()"
+                        class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded transition duration-200">Cancel</button>
+                    <button type="submit"
+                        class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded transition duration-200">Send</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="js/app.js"></script>
+    <script>
+        let currentStartup = null;
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Get startup ID from URL parameters
+            const urlParams = new URLSearchParams(window.location.search);
+            const startupId = urlParams.get('id');
+
+            if (!startupId) {
+                showError('No startup ID provided');
+                return;
+            }
+
+            try {
+                // Fetch startup details
+                currentStartup = await apiFetch(`/startups/${startupId}`);
+                displayStartup(currentStartup);
+            } catch (error) {
+                showError(error.message || 'Failed to load startup details');
+            }
+
+            // Contact Form Handler
+            document.getElementById('contact-form').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                if (!checkLogin()) return;
+
+                const message = document.getElementById('contact-message').value;
+
+                try {
+                    await apiFetch('/inquiries', 'POST', {
+                        startupId: currentStartup._id,
+                        message
+                    });
+                    alert('Message sent successfully!');
+                    closeContactModal();
+                    document.getElementById('contact-message').value = '';
+                } catch (error) {
+                    alert('Error sending message: ' + error.message);
+                }
+            });
+        });
+
+        function displayStartup(startup) {
+            // Hide loading, show content
+            document.getElementById('loading').classList.add('hidden');
+            document.getElementById('startup-detail').classList.remove('hidden');
+
+            // Set page title
+            document.title = `${startup.name} - Startup Marketplace`;
+
+            // Populate fields
+            document.getElementById('industry-badge').textContent = startup.industry;
+            document.getElementById('startup-name').textContent = startup.name;
+            document.getElementById('startup-description').textContent = startup.description;
+
+            document.getElementById('funding-stage').textContent = startup.fundingStage || 'Not disclosed';
+
+            // Website (conditional)
+            if (startup.website) {
+                document.getElementById('website-container').classList.remove('hidden');
+                document.getElementById('website-link').href = startup.website;
+                document.getElementById('website-text').textContent = startup.website;
+            }
+
+            // Contact email
+            document.getElementById('contact-email').href = `mailto:${startup.contactEmail}`;
+            document.getElementById('contact-email').textContent = startup.contactEmail;
+
+            // Created date
+            const createdDate = new Date(startup.createdAt).toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+            document.getElementById('created-date').textContent = createdDate;
+
+            // Owner info
+            if (startup.owner) {
+                const ownerInitial = startup.owner.name.charAt(0).toUpperCase();
+                document.getElementById('owner-initial').textContent = ownerInitial;
+                document.getElementById('owner-name').textContent = startup.owner.name;
+                document.getElementById('owner-email').href = `mailto:${startup.owner.email}`;
+                document.getElementById('owner-email').textContent = startup.owner.email;
+            }
+
+            document.getElementById('contact-startup-id').value = startup._id;
+        }
+
+        function showError(message) {
+            document.getElementById('loading').classList.add('hidden');
+            document.getElementById('error').classList.remove('hidden');
+            document.getElementById('error-message').textContent = message;
+        }
+
+        function checkLogin() {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                if (confirm('You need to be logged in to contact startups. Go to login page?')) {
+                    window.location.href = '/login.html';
+                }
+                return false;
+            }
+            return true;
+        }
+
+        window.openContactModal = () => {
+            if (!checkLogin()) return;
+            document.getElementById('contact-modal').classList.remove('hidden');
+        };
+
+        window.closeContactModal = () => {
+            document.getElementById('contact-modal').classList.add('hidden');
+        };
+    </script>
+</body>
+
+</html>

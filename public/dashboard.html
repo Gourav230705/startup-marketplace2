@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Startup Marketplace</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body class="bg-gray-50">
+    <div id="nav-container"></div>
+
+    <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8 mt-16">
+        <div class="px-4 py-6 sm:px-0">
+            <h1 class="text-3xl font-bold text-gray-900 mb-6">Dashboard</h1>
+
+            <div id="welcome-message" class="mb-8 text-lg text-gray-700"></div>
+
+            <!-- Content for Startup Owners -->
+            <div id="owner-section" class="hidden space-y-8">
+                <div class="glass p-6 rounded-lg">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-xl font-semibold">My Startups</h2>
+                        <button onclick="openStartupModal()"
+                            class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md">
+                            Add Startup
+                        </button>
+                    </div>
+                    <div id="my-startups-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <!-- Loaded via JS -->
+                    </div>
+                </div>
+
+                <div class="glass p-6 rounded-lg">
+                    <h2 class="text-xl font-semibold mb-4">Inquiries Received</h2>
+                    <div id="owner-inquiries-list" class="space-y-4">
+                        <!-- Loaded via JS -->
+                    </div>
+                </div>
+
+                <div class="glass p-6 rounded-lg">
+                    <h2 class="text-xl font-semibold mb-4">My Resource Requests</h2>
+                    <div id="my-resource-requests-list" class="space-y-4">
+                        <!-- Loaded via JS -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Content for Customers -->
+            <div id="customer-section" class="hidden space-y-8">
+                <div class="glass p-6 rounded-lg">
+                    <h2 class="text-xl font-semibold mb-4">My Inquiries / Messages</h2>
+                    <div id="my-inquiries-list" class="space-y-4">
+                        <!-- Loaded via JS -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Content for Admin -->
+            <div id="admin-section" class="hidden space-y-8">
+                <!-- Stats Overview -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div
+                        class="glass p-6 rounded-xl flex items-center justify-between transform hover:scale-105 transition-transform duration-300">
+                        <div>
+                            <p class="text-sm text-gray-500 font-semibold uppercase">Pending Startups</p>
+                            <h3 class="text-3xl font-bold text-gray-800" id="admin-stat-pending">-</h3>
+                        </div>
+                        <div class="p-3 bg-yellow-100 rounded-full text-yellow-600">
+                            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                    </div>
+                    <div
+                        class="glass p-6 rounded-xl flex items-center justify-between transform hover:scale-105 transition-transform duration-300">
+                        <div>
+                            <p class="text-sm text-gray-500 font-semibold uppercase">Total Resources</p>
+                            <h3 class="text-3xl font-bold text-gray-800" id="admin-stat-resources">-</h3>
+                        </div>
+                        <div class="p-3 bg-indigo-100 rounded-full text-indigo-600">
+                            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10">
+                                </path>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Startup Approvals -->
+                <div class="glass p-8 rounded-xl">
+                    <div class="flex flex-col md:flex-row justify-between items-center mb-6">
+                        <div>
+                            <h2 class="text-2xl font-bold text-gray-800">Pending Approvals</h2>
+                            <p class="text-gray-500 mt-1">Review new startups.</p>
+                        </div>
+                    </div>
+                    <div id="admin-approvals-list" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Loaded via JS -->
+                    </div>
+                </div>
+
+                <!-- Resource Management -->
+                <div class="glass p-8 rounded-xl">
+                    <div class="flex flex-col md:flex-row justify-between items-center mb-6">
+                        <div>
+                            <h2 class="text-2xl font-bold text-gray-800">Manage Resources</h2>
+                            <p class="text-gray-500 mt-1">Curate the ecosystem for your startups.</p>
+                        </div>
+                        <button onclick="openResourceModal()"
+                            class="mt-4 md:mt-0 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white px-6 py-2 rounded-lg shadow-md transform hover:scale-105 transition-all duration-300 flex items-center">
+                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 4v16m8-8H4"></path>
+                            </svg>
+                            Add New Resource
+                        </button>
+                    </div>
+
+                    <div id="admin-resources-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <!-- Loaded via JS -->
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Add Startup Modal -->
+    <div id="startup-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden overflow-y-auto h-full w-full">
+        <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+            <div class="mt-3 text-center">
+                <h3 class="text-lg leading-6 font-medium text-gray-900">Add Startup</h3>
+                <form id="startup-form" class="mt-4 text-left">
+                    <div class="mb-4">
+                        <label class="block text-gray-700 text-sm font-bold mb-2">Name</label>
+                        <input type="text" id="startup-name" required
+                            class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-gray-700 text-sm font-bold mb-2">Description</label>
+                        <textarea id="startup-desc" required
+                            class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"></textarea>
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-gray-700 text-sm font-bold mb-2">Industry</label>
+                        <input type="text" id="startup-industry" required
+                            class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-gray-700 text-sm font-bold mb-2">Contact Email</label>
+                        <input type="email" id="startup-email" required
+                            class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <button type="button" onclick="closeStartupModal()"
+                            class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Cancel</button>
+                        <button type="submit"
+                            class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Save</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Reply Modal -->
+    <div id="reply-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden overflow-y-auto h-full w-full z-50">
+        <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+            <div class="mt-3 text-center">
+                <h3 class="text-lg leading-6 font-medium text-gray-900">Reply to Inquiry</h3>
+                <form id="reply-form" class="mt-4 text-left">
+                    <input type="hidden" id="reply-inquiry-id">
+                    <div class="mb-4">
+                        <label class="block text-gray-700 text-sm font-bold mb-2">Message</label>
+                        <p id="reply-original-message"
+                            class="text-xs text-gray-500 mb-2 italic p-2 bg-gray-50 rounded border"></p>
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-gray-700 text-sm font-bold mb-2">Your Reply</label>
+                        <textarea id="reply-message" required rows="4"
+                            class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"></textarea>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <button type="button" onclick="closeReplyModal()"
+                            class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Cancel</button>
+                        <button type="submit"
+                            class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Send
+                            Reply</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Resource Modal -->
+    <div id="resource-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden overflow-y-auto h-full w-full z-50">
+        <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+            <div class="mt-3 text-center">
+                <h3 class="text-lg leading-6 font-medium text-gray-900">Add Resource</h3>
+                <form id="resource-form" class="mt-4 text-left">
+                    <div class="mb-4">
+                        <label class="block text-gray-700 text-sm font-bold mb-2">Title</label>
+                        <input type="text" id="resource-title" required
+                            class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-gray-700 text-sm font-bold mb-2">Description / Bio</label>
+                        <textarea id="resource-desc" required
+                            class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"></textarea>
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-gray-700 text-sm font-bold mb-2">Type</label>
+                        <select id="resource-type" required
+                            class="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                            <option value="general">General</option>
+                            <option value="investor">Investor</option>
+                            <option value="mentor">Mentor</option>
+                            <option value="tool">Tool</option>
+                        </select>
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-gray-700 text-sm font-bold mb-2">Expertise (comma separated)</label>
+                        <input type="text" id="resource-expertise" placeholder="e.g. Fundraising, Sales, Marketing"
+                            class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-gray-700 text-sm font-bold mb-2">Image URL</label>
+                        <input type="url" id="resource-image"
+                            class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-gray-700 text-sm font-bold mb-2">Link</label>
+                        <input type="url" id="resource-link"
+                            class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <button type="button" onclick="closeResourceModal()"
+                            class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Cancel</button>
+                        <button type="submit"
+                            class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Add
+                            Resource</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/app.js"></script>
+    <script src="js/dashboard.js"></script>
+</body>
+
+</html>
